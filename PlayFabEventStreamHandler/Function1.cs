@@ -5,6 +5,7 @@ using PlayFab;
 using PlayFab.AdminModels;
 using PlayFab.Samples;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PlayFabEventStreamHandler
@@ -20,6 +21,12 @@ namespace PlayFabEventStreamHandler
             PlayFabSettings.staticSettings.TitleId = context.TitleAuthenticationContext.Id;
             PlayFabSettings.staticSettings.DeveloperSecretKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
+            await CreateNews(log, context);
+            await CreateItem(log, context);
+        }
+
+        private static async Task CreateNews(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
+        {
             try
             {
                 AddNewsRequest addNewsRequest = new AddNewsRequest
@@ -28,7 +35,39 @@ namespace PlayFabEventStreamHandler
                     Body = $"Created: {context.PlayerProfile.Created}\nDisplay Name: {context.PlayerProfile.DisplayName}"
                 };
                 await PlayFabAdminAPI.AddNewsAsync(addNewsRequest);
-            } catch (Exception e)
+            }
+            catch (Exception e)
+            {
+                log.LogError(e.Message);
+            }
+        }
+
+        private static async Task CreateItem(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
+        {
+            var catalogItems = new List<CatalogItem>
+            {
+                new CatalogItem()
+                {
+                    ItemId = Guid.NewGuid().ToString(),
+                    DisplayName = $"Star of {context.PlayerProfile.PlayerId}",
+                    IsStackable = false,
+                    IsTradable = true,
+                    IsLimitedEdition = true,
+                    InitialLimitedEditionCount = 1,
+                    ItemClass = "PersonalUnique"
+                }
+            };
+
+            try
+            {
+                UpdateCatalogItemsRequest updateCatalogItemsRequest = new UpdateCatalogItemsRequest()
+                {
+                    Catalog = catalogItems,
+                    CatalogVersion = "0.1",
+                };
+                await PlayFabAdminAPI.UpdateCatalogItemsAsync(updateCatalogItemsRequest);
+            }
+            catch (Exception e)
             {
                 log.LogError(e.Message);
             }
