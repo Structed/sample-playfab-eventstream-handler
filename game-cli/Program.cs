@@ -11,7 +11,7 @@ namespace GameCli
         private static bool running = true;
         static void Main(string[] args)
         {
-            PlayFabSettings.staticSettings.TitleId = "XXXXX"; // Please change this value to your own titleId from PlayFab Game Manager
+            PlayFabSettings.staticSettings.TitleId = "881B3"; // Please change this value to your own titleId from PlayFab Game Manager
 
             var request = new LoginWithCustomIDRequest { CustomId = "Player-" + Guid.NewGuid(), CreateAccount = true };
             var loginTask = PlayFabClientAPI.LoginWithCustomIDAsync(request);
