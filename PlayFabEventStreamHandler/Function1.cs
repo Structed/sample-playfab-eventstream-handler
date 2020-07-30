@@ -19,7 +19,8 @@ namespace PlayFabEventStreamHandler
             log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
 
             PlayFabSettings.staticSettings.TitleId = context.TitleAuthenticationContext.Id;
-            PlayFabSettings.staticSettings.DeveloperSecretKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+            PlayFabSettings.staticSettings.DeveloperSecretKey =
+                Environment.GetEnvironmentVariable("DeveloperSecretKey");
 
             await UpdatePlayerData(log, context);
             await CreateNews(log, context);
