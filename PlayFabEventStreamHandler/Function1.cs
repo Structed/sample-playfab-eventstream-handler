@@ -21,8 +21,29 @@ namespace PlayFabEventStreamHandler
             PlayFabSettings.staticSettings.TitleId = context.TitleAuthenticationContext.Id;
             PlayFabSettings.staticSettings.DeveloperSecretKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
+            await UpdatePlayerData(log, context);
             await CreateNews(log, context);
             await CreateItem(log, context);
+        }
+        
+        private static async Task UpdatePlayerData(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
+        {
+            var updateUserDataRequest = new PlayFab.ServerModels.UpdateUserDataRequest {
+                PlayFabId = context.PlayerProfile.PlayerId,
+                Data = new Dictionary<string, string> {
+                    {"foo", "bar"}
+                }
+            };
+            PlayFabResult<PlayFab.ServerModels.UpdateUserDataResult> result = await PlayFabServerAPI.UpdateUserDataAsync(updateUserDataRequest);
+            HandleError(log, result);
+        }
+
+        private static void HandleError(ILogger log, PlayFabBaseResult playFabResult)
+        {
+            if (playFabResult.Error != null)
+            {
+                log.LogError($"Code: {playFabResult.Error.Error}\n{playFabResult.Error.ErrorMessage}");
+            }
         }
 
         private static async Task CreateNews(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
