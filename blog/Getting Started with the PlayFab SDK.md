@@ -72,9 +72,11 @@ To create an Azure Functions Project, either use the splash screen (see screensh
 ![Visual Studio - Splash Screen](images/VisualStudio-NewProject-1.png)
 
 Select the project type “Azure Functions” and click “Next”
+
 ![Visual Studio - Create new Azure Functions Project](images/VisualStudio-NewProject-2.png)
 
 Choose a name for your Project and select the folder for it to be placed in:
+
 ![Visual Studio - Fill out project details](images/VisualStudio-NewProject-3.png)
 
 This will create a folder named according to your Solution name, in which it will create another folder for the project, with the Project’s name you chose.
@@ -84,11 +86,13 @@ Now, in the next dialog, you may either choose an `HttpTrigger` or a `QueueTrigg
 > Please be aware that Azure PlayFab terminates PlayStream-invoked Functions after 1 second, thus QueueTrigger is the better choice here because it will immediately yield back to Azure PlayFab.
 
 For the Storage Account drop-down, you may use Storage Emulator or click “Browse…” to select a storage account. As we will need to test it with Azure PlayFab anyways, let’s go ahead and use an Azure Storage Account.
+
 ![Select Functions Trigger](images/VisualStudio-NewProject-4.png)
 
 > You can even create a Storage Account on the fly using the Dialog!
 
 Once you are done setting up the Storage Account configuration, click the “Create” button and wait for the project to generate. Visual Studio will eventually open the project and show you the code of the generated Azure Function stub.
+
 ![View of scaffold code in Visual Studio](images/VisualStudio-NewProject-5.png)
 
 While asking for a Connection string setting in the dialog, Visual Studio only adds this setting name as the Connection property for the `QueueTrigger`, but does not add it to the `local.settings.json`. This should usually be the connection string that appears as `AzureWebJobsStorage` in the `local.settings.json` file:
