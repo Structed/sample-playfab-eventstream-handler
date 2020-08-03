@@ -7,12 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayFabEventStreamHandler",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game-cli", "game-cli\game-cli.csproj", "{63C7CDA5-8802-4680-94B2-02D683CF30A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{50F3B977-0D6A-40BF-86EF-16C24D57A8BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50F3B977-0D6A-40BF-86EF-16C24D57A8BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50F3B977-0D6A-40BF-86EF-16C24D57A8BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50F3B977-0D6A-40BF-86EF-16C24D57A8BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC59E413-E29B-4EF2-AA1A-E203C29B43B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CC59E413-E29B-4EF2-AA1A-E203C29B43B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC59E413-E29B-4EF2-AA1A-E203C29B43B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
