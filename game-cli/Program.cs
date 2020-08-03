@@ -31,6 +31,7 @@ namespace GameCli
             Console.ReadKey(); // This halts the program and waits for the user
         }
 
+        
         private static void OnLoginComplete(Task<PlayFabResult<LoginResult>> taskResult)
         {
             var apiError = taskResult.Result.Error;
