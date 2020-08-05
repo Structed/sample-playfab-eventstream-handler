@@ -1,13 +1,21 @@
-﻿# Extend PlayFab with Azure Functions - Part 1 - Server Side
+﻿# Reacting to PlayFab PlayStream Events with Azure Functions
 > by Johannes Ebner – Technical Specialist, Global Black Belt Gaming Team
 
 
 # Introduction
 As my teammate Andreas Pohl wrote in his article [Build vs. Buy - Which online service is right for my game](https://developer.microsoft.com/en-us/games/blog/build-vs-buy-which-online-service-is-right-for-my-game/), PlayFab is a great way to get started with a backend for your game.
 
-But now you need to extend it, and you want to use the full potential Azure can give you. What do you do?
+Now if you wanted to extend the functionality with own game logic, for example by leveraging Azure PlayFab's PlayStream and reacting to it's events?
 
-Extending Azure PlayFab with Azure Functions is the best way to do so. I will show you how you can extend PlayFab with Azure Functions. In this post however, we will only use Azure Functions and Azure Storage to get started with the basics and not get into too much complexity.
+Azure Function Apps are the best way to do so! Today, I will show you how you can react to PlayStream Events with Azure Functions and Azure Storage to get started with the basics and not get into too much complexity.
+
+## Discourse: What are Azure Functions?
+From the [official documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview):
+> Azure Functions allows you to run small pieces of code (called "functions") without worrying about application infrastructure. With Azure Functions, the cloud infrastructure provides all the up-to-date servers you need to keep your application running at scale.
+>
+> A function is "triggered" by a specific type of event. [Supported triggers](https://docs.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings) include responding to changes in data, responding to messages, running on a schedule, or as the result of an HTTP request.
+>
+> While you can always code directly against a myriad of services, integrating with other services is streamlined by using bindings. Bindings give you [declarative access to a wide variety of Azure and third-party services](https://docs.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings).
 
 ## Goal
 We will be using C# & .NET Core to create an Azure Function which is getting called every time a new Player registers, which is exposed via a [PlayStream Event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/).
@@ -533,7 +541,10 @@ Next, launch the `game-cli` again, which should log-in a new Account and trigger
 You should now see the entry we created in the PlayFab data.
 
 # Conclusion
-In this article, we learned about the different PlayFab APIs and it's "perspectives". Then we learned how we could use these APIs on both the Client- and Backend-side, which are hosted in a very cost-effective serverless environment on Azure. Not forgetting to hook up PlayFab PlayStream events with Azure Functions using Rules in PlayFab.
+In this article, we learned how to extend PlayFab by reacting to PlayFab PlayStream events with Azure Functions using Rules in PlayFab.
+
+# Taking it further
+Another possibility is to use Azure Functions to extend PlayFab even further, like enabling real-time messaging with [Azure SignalR Service](https://azure.microsoft.com/en-us/services/signalr-service/) or a global database like [CosmosDb](https://azure.microsoft.com/en-us/services/cosmos-db/)!
 
 # Apendix
 ## Notes
