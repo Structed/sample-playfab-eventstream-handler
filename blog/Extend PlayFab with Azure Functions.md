@@ -459,9 +459,9 @@ Ok, that's quite a chunk. Now what does `UpdatePlayerData()` do? Let's analyze t
     
 Each PlayFab API request has a corresponding Request object, which is named accordingly and is located in the Namespace `PlayFab.<API TYPE>Models`, where `<API TYPE>` corresponds to one of the many APIs, like the Server, Admin, User or Authentication APIs, among others.
 
-The `UpdateUserDataRequest` *requires* a `PlayerId`, so it knows which Player to update. You can retrieve that from the Context that we deserialized earlier.
+The `UpdateUserDataRequest` *requires* a `PlayFabId` to know which Object to update. In our case, we want to update a Player, thus we need to pass a `PlayerId`, so it knows which Player to update. You can retrieve that from the Context that we deserialized earlier.
 
-Now to the core: Adding a `Dictionary<string, string>` as Data, containing Key/Value pairs for the Data we want to set on the Player- e.g. the amount of Mana.
+Now to the core: Adding a `Dictionary<string, string>` as `Data`, containing Key/Value pairs for the Data we want to set on the Player- e.g. the amount of Mana.
 
 #### Sending the Request
     PlayFabResult<PlayFab.ServerModels.UpdateUserDataResult> result = await PlayFabServerAPI.UpdateUserDataAsync(updateUserDataRequest);
