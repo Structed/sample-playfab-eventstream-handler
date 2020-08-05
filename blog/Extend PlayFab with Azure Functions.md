@@ -486,6 +486,8 @@ Once the Function has processed the new trigger, go back to Azure PlayFab and se
 ## Deploying the Function
 Now that we have a working Azure Function, let’s deploy it to Azure!
 
+> If you do not use Visual Studio, but want to use another IDE/Toolset, there are examples for creating & publishing Azure Function Apps with [Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code?pivots=programming-language-csharp) or via [CLI](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli?tabs=bash%2Cbrowser&pivots=programming-language-csharp).
+
 ### Deploy with the "Publish" command
 To get started and for the sake of this demo, we will be using “right click deploy”, the deployment mechanism integrated in Visual Studio. While this is convenient for a demo, please consider [Azure DevOps](https://dev.azure.com/) or [GitHub Actions](https://github.com/features/actions) to build your Continuous Integration & Continuous Deployment (CI/CD) pipelines for a real project – because *“Friends don’t let Friends right-click publish!”*
 
