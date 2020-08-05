@@ -3,7 +3,7 @@
 
 
 # Introduction
-Azure PlayFab is a really great product to help you build out your backend without creating all the systems like Item Catalogs, Shops etc. all by yourself. But PlayFab really evolves all the time with the **feedback you provide**! With such a broad product and Microsoft’s commitment of not breaking anything for you while products evolve, some complexities inevitably arise.
+Azure PlayFab is a really great product to help you build out your backend without creating all the systems like Item Catalogs, Shops etc. all by yourself. But PlayFab really evolves all the time with the **feedback you provide** - either through [Forums](https://community.playfab.com/index.html), [Slack](https://api.playfab.com/slack), direct contact to the PlayFab team or via the Global Black Belts like myself. With such a broad product and Microsoft’s best effort to not break anything for you while products evolve, some complexities inevitably arise.
 
 Evolving over time means, that you create new best practices, new concepts. For example, one of the newer additions in terms of APIs is the [Entity Programming Model](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/), which is different to what most developers would characterize as a “traditional” web API. But it goes very much hand in hand with modern game engines like Unreal and Unity, which have an [Entity-Component-Systems (ECS)](https://en.wikipedia.org/wiki/Entity_component_system) at their heart.
 
