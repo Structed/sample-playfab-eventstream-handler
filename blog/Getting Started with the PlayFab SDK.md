@@ -16,11 +16,7 @@ Based on PlayFab’s desire to reach as many developers as possible and cope wit
 However, an auto-generated SDK like PlayFab’s might at times appear a bit harder to use than your usual-hand crafted library.
 
 ## Goal
-To help you with these complexities, this blog post shall give you a conceptual overview from a developer’s perspective and give a full end-to-end example of how a serverless backend in plain C# (not Unity, as the official examples) could look like.
 
-We will be using C# & .NET Core to create an Azure Function which is getting called every time a new Player registers.
-
-This Azure Function will then add an Item to this new Player’s Inventory.
 
 ## Prerequisites
 
