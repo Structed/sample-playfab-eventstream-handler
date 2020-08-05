@@ -7,14 +7,14 @@ As my teammate Andreas Pohl wrote in his article [Build vs. Buy - Which online s
 
 But now you need to extend it, and you want to use the full potential Azure can give you. What do you do?
 
-Extending Azure PlayFab with Azure Functions is the best way to do so. I will show you how you can extend PlayFab with Azure Functions. In this  post however, we will only use Azure Functions and Azure Storage to get started with the basics and not get into too much complexity.
+Extending Azure PlayFab with Azure Functions is the best way to do so. I will show you how you can extend PlayFab with Azure Functions. In this post however, we will only use Azure Functions and Azure Storage to get started with the basics and not get into too much complexity.
 
 ## Goal
-We will be using C# & .NET Core to create an Azure Function which is getting called every time a new Player registers.
+We will be using C# & .NET Core to create an Azure Function which is getting called every time a new Player registers, which is exposed via a [PlayStream Event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/).
 
 This Azure Function will then add "User Data" to this new Player.
 
-> Title User Data is title-specific custom data for the user which is readable and writable by the client. But you can of course set this via the Server as well.
+> Title User Data is title-specific custom data for the user which is readable and writable by the client. But you can of course set this via the Server as well. Player Data and User Data are terms used interchangeable within PlayFab terminology. Please refer to the [documentation](https://docs.microsoft.com/en-us/gaming/playfab/features/data/playerdata/quickstart) for more information.
 
 ## Prerequisites
 
@@ -70,11 +70,11 @@ Click "Create" when you have filled all fields and created a resource group.
 
 ![Create storage account](images/VisualStudio-NewProject-NewStorageAccount-2.png)
 
-Now back to the Storage Account select screen, select the Storage Accoutn you just created and click "Add".
+Now back to the Storage Account select screen, select the one you just created and click "Add".
 
 ![Add storage account config](images/VisualStudio-NewProject-NewStorageAccount-3.png)
 
-The storage accoutn should now appear in the drop-down, beneath "Storage Emulator" and "Browse...". Select it.
+The Storage Account should now appear in the drop-down, beneath "Storage Emulator" and "Browse...". Select it.
 
 I would advise to leave "Connection string setting name" empty for now. Using this would create a new setting and would be a bit confusing for now.
 
@@ -84,13 +84,47 @@ Just call it `login-events` for now.
 
 ![Set up storage settings](images/VisualStudio-NewProject-4-1.png)
 
-Once you are done setting up the Storage Account configuration, click the “Create” button and wait for the project to generate. Visual Studio will eventually open the project and show you the code of the generated Azure Function stub.
+Once you are done setting up the Storage Account configuration, click the “Create” button and wait for the project to generate. Visual Studio will eventually open the project and show you the code of the generated Azure Function stub (your namespace name may vary):
 
-![View of scaffold code in Visual Studio](images/VisualStudio-NewProject-5.png)
+    using System;
+    using Microsoft.Azure.WebJobs;
+    using Microsoft.Azure.WebJobs.Host;
+    using Microsoft.Extensions.Logging;
+    
+    namespace PlayFabEventStreamHandler
+    {
+        public static class Function1
+        {
+            [FunctionName("Function1")]
+            public static void Run([QueueTrigger("login-events", Connection = "")]string myQueueItem, ILogger log)
+            {
+                log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
+            }
+        }
+    }
 
-While asking for a Connection string setting in the dialog, Visual Studio only adds this setting name as the Connection property for the `QueueTrigger`, but does not add it to the `local.settings.json`. This should usually be the connection string that appears as `AzureWebJobsStorage` in the `local.settings.json` file:
 
-![Connection Strings](images/VisualStudio-local.settings.json.png)
+<!-- ![View of scaffold code in Visual Studio](images/VisualStudio-NewProject-5.png) -->
+
+> You might have noticed, that the Function was creatively named `Function1`, because Visual Studio just does not know what we what to do. Please rename the File, Class and the Function name in the Annotation as `PlayStreamEventHandler`.
+
+> Renaming is done easiest in Visual Studio by right-clicking the Class name in the code editor and selecting "Rename" (or just press F2). This will open a tiny dialog asking you where you want to replace. Select "Rename file" and "Include strings". This will make sure Class and File are renamed as well as the Attribute string.
+
+![Rename Function1](images/VisualStudio-RenameFile.png)
+
+While asking for a Connection string setting in the dialog, we did not give it a name. The reason is, that Visual Studio adds a connection string by default, called `AzureWebJobsStorage`. This is set in the `local.settings.json` config file:
+
+![Connection String](images/VisualStudio-local.settings.json.png)
+
+> `local.settings.json` is a config file *only* for local configuration. For deployed functions, you can either use the [Application Settings built into Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings), or for more advanced scenarios, you could use [Azure App Config](https://docs.microsoft.com/en-us/azure/azure-app-configuration/overview).
+
+But because we did not give the connection setting a name earlier, there was no name set in the function. If you look closely at the Azure Function code, you can spot it in the Signature of the `Run` method. Look at the `Connection = ""` property of the `QueueTrigger` attribute:
+
+    public static void Run([QueueTrigger("login-events", Connection = "")]string myQueueItem, ILogger log)
+
+We just need to put in `AzureWebJobsStorage` instead of the empty string to load the right connection string:
+
+    public static void Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")]string myQueueItem, ILogger log)
 
 ### Add the Azure PlayFab package
 The Azure PlayFab SDK for C# is available via NuGet. You can either add the latest version via the dotnet CLI
@@ -140,7 +174,7 @@ Once you are in the Title’s overview, click “Automation” (1), which opens 
 
 ![PlayFab: Functions listing](images/PlayFab-RegisterFunction-1.png)
 
-The Dialog is (sadly) not extremely informative, so let’s go through it.
+Let'S go through the individual settings for a registration:
 
 ![PlayFab: Registering an Azure Function with QueueTrigger](images/PlayFab-RegisterFunction-2.png)
 
@@ -156,7 +190,7 @@ To set up a Rule, within a PlayFab Title, go to *“Automation”* (1) in the le
 
 ![PlayFab: Adding a Rule](images/PlayFab-AddRule-1.png)
 
-A Rule is a configuration that listens on a *PlayStream* event emitted by Azure PlayFab. When such an event occurs, the Rule checks whether the configured Conditions are met and if they are, triggers the configured *Action*.
+A Rule is a configuration that listens on a [*PlayStream* event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/) emitted by Azure PlayFab. When such an event occurs, the Rule checks whether the configured Conditions are met and if they are, triggers the configured *Action*.
 
 In our case, we want no conditions, but want to “Execute Azure Function”. In fact, what it does, is calling its own internal binding we just set up and provides it the PlayStream event data and additional arguments you may specify here (in JSON format) as argument to that binding.
 
@@ -259,7 +293,7 @@ Every time a Function is triggered, The `Context` in which it was executed is se
 ### Parsing the Context
 We already receive the Context in the Function we have created, it is the `myQueueItem` parameter:
 
-        [FunctionName("Function1")]
+        [FunctionName("PlayStreamEventHandler")]
         public static void Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")]string myQueueItem, ILogger log)
         {
             log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
@@ -271,7 +305,7 @@ To do this, we first need the Class to convert to. The easiest way to do this is
 
 Now, we can actually deserialize the Context to `PlayerPlayStreamFunctionExecutionContext`:
 
-        [FunctionName("Function1")]
+        [FunctionName("PlayStreamEventHandler")]
         public static void Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")]string myQueueItem, ILogger log)
         {
             var context = JsonConvert.DeserializeObject<PlayerPlayStreamFunctionExecutionContext<dynamic>>(myQueueItem);
@@ -324,9 +358,9 @@ The function should now look like this:
 
     namespace PlayFabEventStreamHandler
     {
-        public static class Function1
+        public static class PlayStreamEventHandler
         {
-            [FunctionName("Function1")]
+            [FunctionName("PlayStreamEventHandler")]
             public static async Task Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
             {
                 var context = JsonConvert.DeserializeObject<PlayerPlayStreamFunctionExecutionContext<dynamic>>(myQueueItem);
@@ -377,9 +411,9 @@ Your full function code should now look something like this:
     
     namespace PlayFabEventStreamHandler
     {
-        public static class Function1
+        public static class PlayStreamEventHandler
         {
-            [FunctionName("Function1")]
+            [FunctionName("PlayStreamEventHandler")]
             public static async Task Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
             {
                 var context = JsonConvert.DeserializeObject<PlayerPlayStreamFunctionExecutionContext<dynamic>>(myQueueItem);
@@ -501,5 +535,4 @@ In this article, we learned about the different PlayFab APIs and it's "perspecti
 
 # Apendix
 ## Notes
-* It would be good practice to rename `Function1` to something sensible :-)
 * You might want to use [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) for secrets instead of AppSettings, or [Azure Managed Identities](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet), for even more security.
