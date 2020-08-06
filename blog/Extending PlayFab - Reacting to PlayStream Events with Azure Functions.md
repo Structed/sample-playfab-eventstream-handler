@@ -318,7 +318,7 @@ We already receive the Context in the Function we have created, it is the `myQue
 
 However, it is just a JSON string, and we want it to be parsed to a C# POCO ("Plain Old C# Object").
 
-To do this, we first need the Class to convert to. The easiest way to do this is to download the [Helper classes file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs), provided by PlayFab. It will contain all the Context Objects you need for the various deserialization use-cases.
+To do this, we first need the Class to convert to. The easiest way to do this is to use the PlayFab helper classes we downloaded and added above. It will contain all the Context Objects you need for the various deserialization use-cases.
 
 Now, we can actually deserialize the Context to `PlayerPlayStreamFunctionExecutionContext`:
 
@@ -506,7 +506,7 @@ Now that we have a working Azure Function, let’s deploy it to Azure!
 > If you do not use Visual Studio, but want to use another IDE/Toolset, there are examples for creating & publishing Azure Function Apps with [Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code?pivots=programming-language-csharp) or via [CLI](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli?tabs=bash%2Cbrowser&pivots=programming-language-csharp).
 
 ### Deploy with the "Publish" command
-To get started and for the sake of this demo, we will be using “right click deploy”, the deployment mechanism integrated in Visual Studio. While this is convenient for a demo, please consider [Azure DevOps](https://dev.azure.com/) or [GitHub Actions](https://github.com/features/actions) to build your Continuous Integration & Continuous Deployment (CI/CD) pipelines for a real project – because *“Friends don’t let Friends right-click publish!”*
+To get started and for the sake of this demo, we will be using “right click deploy”, the deployment mechanism integrated in Visual Studio. While this is convenient for a demo, please consider [Azure DevOps](https://dev.azure.com/) or [GitHub Actions](https://github.com/features/actions) to build your **automated** Continuous Integration & Continuous Deployment (CI/CD) pipelines for a real project – because manual deployments are error prone, require knowledge by a team member etc. Thus, there is the saying: *“Friends don’t let Friends right-click publish!”*
 
 In Visual Studio, right-click the project and click “Publish”:
 
@@ -536,7 +536,7 @@ Now select the Function App you want to deploy to:
 
 Once selected, Visual Studio will pull the “Publishing Profile” from Azure.
 
-> If there is an exclamation mark warning symbol somewhere, hover over it to know why. In the screenshot below, my Storage configuration was not properly configured for the Publish wizard to work with, so I had to fix this.
+> **WARNING** Never add the user part of the publishing profile (`*.pubxml.user`) to source control, it contains your encrypted password!
 
 Now click “Publish” to deploy your Azure Function App.
 
@@ -549,12 +549,15 @@ Next, launch the `game-cli` again, which should log-in a new Account and trigger
 
 You should now see the entry we created in the PlayFab data.
 
-# Conclusion
-In this article, we learned how to extend PlayFab by reacting to PlayFab PlayStream events with Azure Functions using Rules in PlayFab.
-
 # Taking it further
 Another possibility is to use Azure Functions to extend PlayFab even further, like enabling real-time messaging with [Azure SignalR Service](https://azure.microsoft.com/en-us/services/signalr-service/) or a global database like [CosmosDb](https://azure.microsoft.com/en-us/services/cosmos-db/)!
 
-# Apendix
-## Notes
-* You might want to use [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) for secrets instead of AppSettings, or [Azure Managed Identities](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet), for even more security.
+# Conclusion
+In this article, we learned how to extend PlayFab by reacting to PlayFab PlayStream events with Azure Functions using Rules in PlayFab.
+
+We created the binding, added a rule and set-up an Azure Function app with a Storage Queue trigger. The Azure Function reads a message from the Storage Queue, which contains the PlayFab context. The context is used to reference the registered Player when we update it's Player data on Playfab.
+
+Last, we learned about the greater potential of extending Azure PlayFab with Azure Functions.
+
+
+I hope you enjoyed this end-to-end example. You can follow me on [Twitter @structed](https://twitter.com/structed) and ask me about this post or all things Azure or have a look at my [GitHub](https://github.com/structed)!
