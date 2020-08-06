@@ -60,11 +60,11 @@ Choose a name for your Project and select the folder for it to be placed in:
 
 This will create a folder named according to your Solution name, in which it will create another folder for the project, with the Project’s name you chose.
 
-Now, in the next dialog, you may either choose an `HttpTrigger` or a `QueueTrigger` for your Function. Please choose `QueueTrigger`
+Now, in the next dialog, you may either choose an `HttpTrigger` or a `QueueTrigger` for your Function. Please choose `QueueTrigger`.
 
 > Please be aware that Azure PlayFab terminates PlayStream-invoked Azure Functions after 1 second, thus `QueueTrigger` is the better choice here since it will immediately yield back to Azure PlayFab.
 
-For the Storage Account drop-down, you may use Storage Emulator (which comes with Visual Studio or you can use the new ["Azurite"](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite), which is the new generation of the Storage Emulator) or click “Browse…” to select a storage account. As we will need to test it with Azure PlayFab anyways, let’s go ahead and use an Azure Storage Account. Pelase click "Browse " to create a new Storage Account:
+For the Storage Account drop-down, you may use Storage Emulator (which comes with Visual Studio or you can use the new ["Azurite"](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite), which is the new generation of the Storage Emulator) or click “Browse…” to select a Storage Account. As we will need to test it with Azure PlayFab anyways, let’s go ahead and use an Azure Storage Account. Please click "Browse…" to create a new Storage Account:
 
 ![Select Functions Trigger](images/VisualStudio-NewProject-4.png)
 
@@ -117,13 +117,13 @@ Once you are done setting up the Storage Account configuration, click the “Cre
 
 <!-- ![View of scaffold code in Visual Studio](images/VisualStudio-NewProject-5.png) -->
 
-> You might have noticed, that the Function was creatively named `Function1`, because Visual Studio just does not know what we what to do. Please rename the File, Class and the Function name in the Annotation as `PlayStreamEventHandler`.
-
+> You might have noticed, that the Function was named `Function1`, because Visual Studio just does not know what we want to do. Please rename the File, Class and the Function name in the Annotation as `PlayStreamEventHandler`.
+>
 > Renaming is done easiest in Visual Studio by right-clicking the Class name in the code editor and selecting "Rename" (or just press F2). This will open a tiny dialog asking you where you want to replace. Select "Rename file" and "Include strings". This will make sure Class and File are renamed as well as the Attribute string.
 
 ![Rename Function1](images/VisualStudio-RenameFile.png)
 
-While asking for a Connection string setting in the dialog, we did not give it a name. The reason is, that Visual Studio adds a connection string by default, called `AzureWebJobsStorage`. This is set in the `local.settings.json` config file:
+While asking for a Connection string setting in the dialog, we did not give it a name. The reason is, that Visual Studio adds a connection string to the Storage Account we previously selected, by default It is called [`AzureWebJobsStorage`](https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#azurewebjobsstorage). This is set in the `local.settings.json` config file:
 
 ![Connection String](images/VisualStudio-local.settings.json.png)
 
@@ -153,27 +153,32 @@ Open the “Browse” tab and search for PlayFab. Select the `PlayFabAllSDK` and
 
 > Please note: you should also update the installed packages because the Visual Studio template ships with a slightly older version of the SDKs for Azure Functions and WebJobs Storage.
 
-### Test the Function
-In Visual Studio, press F5 (or click Build --> Debug) to launch the local Azure Functions runtime in debug mode.
+### Create a Storage Queue
+The last missing piece before we have all the infrastructure to test the Function the first time is a [Storage Queue](https://azure.microsoft.com/en-us/services/storage/queues/). Now let's create one!
 
-Now, let’s create a test message. To do this, go to the Azure Portal and open up your Storage Account’s Queue blade:
+Go to the Azure Portal and open up your Storage Account’s Queue blade:
 
 ![Azure Storage Account - Queues overview](images/AzurePortal-StorageAccount-Queue.png)
 
-If you haven’t already created a Queue here, do so now by clicking the “+ Queue” button. Make sure to use the same name you specified when creating the Azure Function with the Queue Trigger (see screenshot below).
+Created a Queue by clicking the “+ Queue” button. Make sure to use the same name you specified when creating the Azure Function with the Queue Trigger (see screenshot below). We used to call it `login-events`´.
 
 ![Code - Name of subscribed queue](images/VisualStudio-QueueTriggerAttribute.png)
 
+### Test the Function
 Once you have created the Queue, click the Queue entry in the Portal to get to the detail Blade.
 Here, click “+ Add message”. In the new Dialog, just add some text and click “OK”.
 
 ![Storage Queue: Add new message](images/AzurePortal-StorageAccount-AddQueue.png)
 
-Now watch the console window of your function: it will log out how it processes the queue message you just added!
+Back in Visual Studio, press F5 (or click Build --> Debug) to launch the local Azure Functions runtime in debug mode.
+
+Now watch the console window of your Function: it will log out how it processes the queue message you just added!
 
 ![Terminal shows running Function](images/Termina-FunctionFirstRun.png)
 
 Checking back in the Azure Portal’s view of the Queue, you click the “Refresh” button to see how the message disappeared, because it got processed.
+
+> If you want to inspect the Queue without actually de-queuing it, you can use the [Azure Storage Explorer](https://storageexplorer.com).
 
 # Set up PlayFab
 To call your Azure Function from Azure PlayFab, we need to register the Function binding via the Azure Storage Queue and set up an Event Trigger (aka *“Rule”*).
@@ -185,7 +190,7 @@ Once you are in the Title’s overview, click “Automation” (1), which opens 
 
 ![PlayFab: Functions listing](images/PlayFab-RegisterFunction-1.png)
 
-Let'S go through the individual settings for a registration:
+Let's go through the individual settings for a registration:
 
 ![PlayFab: Registering an Azure Function with QueueTrigger](images/PlayFab-RegisterFunction-2.png)
 
@@ -290,16 +295,17 @@ Now execute the program and watch how the event is executed in PlayFab via the P
 It's time to start the actual backend implementation!
 
 ## Using the PlayFab Context
-Before we even get started with writing backend code, you will need a [Helper classes file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs), provided by PlayFab. [Download the file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs) and save it to your project. Here is why:
+Before we even get started with writing backend code, you will need a [Helper classes file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs), provided by PlayFab. [Download the file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs) and save it to your project (directly beneath the `*.csproj`
+ or the Function class file). Here is why:
 
-Every time a Function is triggered, The `Context` in which it was executed is sent as a parameter, The Context includes the following when the Function is triggered via a PlayStream Event:
+Every time a Function is triggered, The `Context` in which it was executed is sent as a parameter. The Context includes the following when the Function is triggered via a PlayStream Event:
 
 * The Entity Profile
 * The PlayStream event which triggered the script.
 * A boolean that indicates whether a PlayStream event is sent as part of the function being executed
 * The Payload data you specified when setting up the binding in PlayFab
 
-> For more information on the Context and what it contains in other environments, please see the [Using CloudScript context models Tutorial](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/cloudscript-af/cloudscript-af-context).
+> For more information on the Context and what it contains in other environments (like if an Azure Function is called from a Game Client), please see the [Using CloudScript context models Tutorial](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/cloudscript-af/cloudscript-af-context).
 
 ### Parsing the Context
 We already receive the Context in the Function we have created, it is the `myQueueItem` parameter:
