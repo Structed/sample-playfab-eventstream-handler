@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace PlayFabEventStreamHandler
 {
-    public static class Function1
+    public static class PlayStreamEventHandler
     {
-        [FunctionName("Function1")]
+        [FunctionName("PlayStreamEventHandler")]
         public static async Task Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
         {
             var context = JsonConvert.DeserializeObject<PlayerPlayStreamFunctionExecutionContext<dynamic>>(myQueueItem);
