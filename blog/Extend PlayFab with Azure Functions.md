@@ -1,13 +1,13 @@
-﻿# Reacting to PlayFab PlayStream Events with Azure Functions
+﻿# Extending PlayFab: Reacting to PlayStream Events with Azure Functions
 > by Johannes Ebner – Technical Specialist, Global Black Belt Gaming Team
 
 
 # Introduction
 As my teammate Andreas Pohl wrote in his article [Build vs. Buy - Which online service is right for my game](https://developer.microsoft.com/en-us/games/blog/build-vs-buy-which-online-service-is-right-for-my-game/), PlayFab is a great way to get started with a backend for your game.
 
-Now if you wanted to extend the functionality with own game logic, for example by leveraging Azure PlayFab's PlayStream and reacting to it's events?
+Now you started with PlayFab and you have come to the point where you want to extend the functionality with your own game logic, for example by leveraging [Azure PlayFab's PlayStream](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/) and reacting to it's events. How would you do that?
 
-Azure Function Apps are the best way to do so! Today, I will show you how you can react to PlayStream Events with Azure Functions and Azure Storage to get started with the basics and not get into too much complexity.
+Good news: PlayFab has an integration with [Azure Functions](https://azure.microsoft.com/en-us/services/functions/)! In this article, I will show you how you can react to PlayStream Events with Azure Functions and Azure Storage.
 
 ## Discourse: What are Azure Functions?
 From the [official documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview):
@@ -18,28 +18,31 @@ From the [official documentation](https://docs.microsoft.com/en-us/azure/azure-f
 > While you can always code directly against a myriad of services, integrating with other services is streamlined by using bindings. Bindings give you [declarative access to a wide variety of Azure and third-party services](https://docs.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings).
 
 ## Goal
-We will be using C# & .NET Core to create an Azure Function which is getting called every time a new Player registers, which is exposed via a [PlayStream Event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/).
+This is a detailed end-to-end example on how to extend Azure PlayFab with Azure Functions.
 
-This Azure Function will then add "User Data" to this new Player.
+We will be using C# & .NET Core to create an Azure Function and bind it to a [PlayStream Event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/). The event to bind to will be the `player_created` Event, which fires every time a new player registers. The binding will then call the Azure Function.
+
+This Azure Function will add "User Data" to this new Player.
 
 > Title User Data is title-specific custom data for the user which is readable and writable by the client. But you can of course set this via the Server as well. Player Data and User Data are terms used interchangeable within PlayFab terminology. Please refer to the [documentation](https://docs.microsoft.com/en-us/gaming/playfab/features/data/playerdata/quickstart) for more information.
 
 ## Prerequisites
 
 ### Editor/IDE
-While you can follow along with basically any Editor/IDE, I will be using [Visual Studio 2019](https://visualstudio.microsoft.com/) (you may use the the free Visual Studio 2019 Community Edition!) because it has all the batteries included for our tasks ahead. Other IDEs/Editors might require the [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools).
+While you can follow along with basically any Editor/IDE, I will be using [Visual Studio 2019](https://visualstudio.microsoft.com/) (you may use the the free Visual Studio 2019 Community Edition!) because it has all the batteries included for our tasks ahead.
+
+> If you do not use Visual Studio, but want to use another IDE/Toolset, there are examples for creating & publishing Azure Function Apps with [Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code?pivots=programming-language-csharp) or via [CLI](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli?tabs=bash%2Cbrowser&pivots=programming-language-csharp).
 
 ### Azure Access
-If you do not yet have used Azure, you can sign up for free and get some additional goodies with [Visual Studio Dev Essentials](https://visualstudio.microsoft.com/dev-essentials/) program.
-
-Or you can just [sign up for free](https://azure.microsoft.com/en-us/free/gaming/).
+If you do not yet have used Azure, you [sign up for free](https://azure.microsoft.com/en-us/free/gaming/) and get some additional goodies with [Visual Studio Dev Essentials](https://visualstudio.microsoft.com/dev-essentials/) program.
 
 ### Azure PlayFab access
-And, of course, since this is a Tutorial on how to use [Azure PlayFab](https://playfab.com/), you need an existing Title on PlayFab as well. You could use the same Microsoft Account you used for signing up to Azure.
-
+And, of course, since this is a Tutorial on how to use [Azure PlayFab](https://playfab.com/), you need an existing Title on PlayFab as well. You could use the same Microsoft Account you used for signing up to Azure. Remember: There is a [free tier to get you started](https://developer.playfab.com/en-US/sign-up)!
 
 # Getting Started
-As there are so many languages and platforms supported by Azure PlayFab, I had to decide for one and chose the language and platform I am best in: Pure C# & .NET Core. But there are great guides for various Game Engines like Unity and Unreal, and PlayFab provides SDKs for a plethora of languages that are very similar to the C# SDK because they are all auto-generated from the same REST API.
+As there are so many languages and platforms supported by Azure PlayFab and Azure Functions, I had to decide for one and chose the language and platform I am best in: Pure C# & .NET Core. But there are great guides for various Game Engines like Unity and Unreal, and PlayFab provides SDKs for a plethora of languages that are very similar to the C# SDK because they are all auto-generated from the same REST API.
+
+So while this is C#, most of what we do here is very similar in other languages/runtimes
 
 ## Project Setup
 ### Create an Azure Functions Project
