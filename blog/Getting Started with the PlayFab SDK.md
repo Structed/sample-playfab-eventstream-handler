@@ -2,41 +2,30 @@
 > by Johannes Ebner – Technical Specialist, Global Black Belt Gaming Team
 
 
-# Introduction
-Azure PlayFab is a really great product to help you build out your backend without creating all the systems like Item Catalogs, Shops etc. all by yourself. But PlayFab really evolves all the time with the **feedback you provide** - either through [Forums](https://community.playfab.com/index.html), [Slack](https://api.playfab.com/slack), direct contact to the PlayFab team or via the Global Black Belts like myself. With such a broad product and Microsoft’s best effort to not break anything for you while products evolve, some complexities inevitably arise.
+Azure PlayFab is a really great product to help you build out your backend without creating all the systems like Item Catalogs, Shops etc. all by yourself. But PlayFab really evolves all the time - including development based on the **feedback you provide** - either through [Forums](https://community.playfab.com/index.html), [Slack](https://api.playfab.com/slack), direct contact to the PlayFab team or via the Global Black Belts like myself. With such a broad product and Microsoft’s best effort to not break anything for you while products evolve, some complexities inevitably arise.
 
-So when you start with PlayFab and the SDK, you might be looking at all these APIs and ask yourself why? Why are these separate things? Why is there an Admin, Server, Client API, but then also specialized ones for certain systems, like Profiles?
+So when you start with PlayFab and the SDK, you might be looking at all these APIs and ask yourself: Why are there so many APIs? Why are these separate things? Why is there an Admin, Server, Client API, but then also specialized ones for certain systems, like Profiles?
 
-Evolving over time means, that you create new best practices, new concepts. For example, one of the newer additions in terms of APIs is the [Entity Programming Model](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/), which is different to what most developers would characterize as a “traditional” web API. But it goes very much hand in hand with modern game engines like Unreal and Unity, which have an [Entity-Component-Systems (ECS)](https://en.wikipedia.org/wiki/Entity_component_system) at their heart. This means, that the PlayFab team needs to carefully think about how to integrate these new Systems and Features, while keeping complexity in check and not breaking things.
+Evolution over time means, that you create new best practices, new concepts. For example, one of the newer additions in terms of APIs is the [Entity Programming Model](https://docs.microsoft.com/en-us/gaming/playfab/features/data/entities/), which is different to what most developers would characterize as a “traditional” web API. But it goes very much hand in hand with modern game engines like Unreal and Unity, which have an [Entity-Component-Systems (ECS)](https://en.wikipedia.org/wiki/Entity_component_system) at their heart. This means, that the PlayFab team needs to carefully think about how to integrate these new Systems and Features, while keeping complexity in check and not breaking things.
 
 # What does that mean?
-This constant evolution means, that APIs need to be 
+This constant evolution means, that APIs need to be very extensible. You can't just change an API because that would break *every existing* application! Instead, you *add* new things and usually never take anything away. This means you need to plan ahead very well and separate concerns. That is why there are so many APIs and so many specific ones.
 
-Based on PlayFab’s desire to reach as many developers as possible and cope with the maintenance work required by steadily evolving APIs, PlayFab has opted to not hand-craft SDKSs, but auto-generate SDK for you to use in your projects.
-However, an auto-generated SDK like PlayFab’s might at times appear a bit harder to use than your usual-hand crafted library.
+Another reason for splitting up APIs is to have differing Authentication methods. More about that in the Authentication section below
 
-## Goal
-
-
-## Prerequisites
-
-### Azure PlayFab access
-And, of course, since this is a Tutorial on how to use [Azure PlayFab](https://playfab.com/), you need an existing Title on PlayFab as well. You could use the same Microsoft Account you used for signing up to Azure.
-
-# Many APIs, one SDK
-Azure PlayFab has added many features over time and has evolved APIs to best cater for these features, or for new best-practices based on experience with customers.
-As of today, Azure PlayFab’s APIs follow three rather different paradigms:
+# API Paradigms
+This constant evolution of the Azure PlayFab API has led to an API surface, which I would characterize into three rather different paradigms:
 
 ## Paradigm one: “Perspectives API”
 (Perspectives API is a term I made up 😉)
 
-The first paradigm takes a different perspective than most API’s I have encountered: the perspective of the user of the API – like a Player, an Admin etc. This means, you will find the same functionality duplicated or slightly changed under a different API. These end-user-perspective APIs are:
+The first paradigm takes a different perspective than most APIs I have encountered: the perspective of the user of the API – like a Player, an Admin etc. This means, you will find the same functionality "duplicated" or slightly changed under a different API. These end-user-perspective APIs are:
 
 * AdminAPI
 * ClientAPI
 * ServerAPI
 
-An example of this duplication is, for instance, the `ConsumeItem` request. It exists in both Client and Server APIs, does exactly the same, and uses the same request body and headers: except the authentication headers.
+An example of this "duplication" is, for instance, the `ConsumeItem` request. It exists in both Client and Server APIs, does exactly the same, and uses the same request body and headers: except the authentication headers.
 The Client variant wants a `SessionTicket`, while the Server variant wants a `SecretKey`.
 Let’s look at these three API perspectives for a moment:
 
@@ -54,5 +43,8 @@ The second is the more common separation: an API per system, e.g. localization, 
 
 ## Paradigm Three: “Entities API”
 And lastly, there is the “Entity Programming Model”, which allows you to “attach” or “read” objects from specific Entity Types, which map to built-in functionality in Azure PlayFab, like a Player.
+
+
+# Authentication
 
 # Conclusion
