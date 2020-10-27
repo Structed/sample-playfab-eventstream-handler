@@ -30,8 +30,6 @@ namespace GameCli
             Console.WriteLine($"Done! Created new player named \"{request.CustomId}\". Press any key to close");
             Console.ReadKey(); // This halts the program and waits for the user
         }
-
-        
         private static void OnLoginComplete(Task<PlayFabResult<LoginResult>> taskResult)
         {
             var apiError = taskResult.Result.Error;
