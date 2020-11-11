@@ -29,7 +29,7 @@ This Azure Function will add "User Data" to this new Player.
 ## Prerequisites
 
 ### Editor/IDE
-While you can follow along with basically any Editor/IDE, I will be using [Visual Studio 2019](https://visualstudio.microsoft.com/) (you may use the the free Visual Studio 2019 Community Edition!) because it has all the batteries included for our tasks ahead.
+While you can follow along with basically any Editor/IDE, I will be using [Visual Studio 2019](https://visualstudio.microsoft.com/) (you may use the the **free** Visual Studio 2019 Community Edition!) because it has all the batteries included for our tasks ahead.
 
 > If you do not use Visual Studio, but want to use another IDE/Toolset, there are examples for creating & publishing Azure Function Apps with [Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code?pivots=programming-language-csharp) or via [CLI](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli?tabs=bash%2Cbrowser&pivots=programming-language-csharp).
 
@@ -46,7 +46,7 @@ So while this is C#, most of what we do here is very similar in other languages/
 
 ## Project Setup
 ### Create an Azure Functions Project
-To create an Azure Functions Project, either use the splash screen (see screenshot below) or use File --> New Project…
+To create an Azure Functions Project, open up Visual Studio and either use the splash screen (see screenshot below) or use File --> New Project…
 
 ![Visual Studio - Splash Screen](images/VisualStudio-NewProject-1.png)
 
@@ -69,6 +69,7 @@ For the Storage Account drop-down, you may use Storage Emulator (which comes wit
 ![Select Functions Trigger](images/VisualStudio-NewProject-4.png)
 
 In the next dialog, click "Create a storage account"
+
 ![Select storage account](images/VisualStudio-NewProject-NewStorageAccount-1.png)
 
 When creating the storage account, make sure to create a unique name. It actually has to be globally unique, because it will be part of the URI. You will see a warning if it is not unique.
@@ -206,7 +207,7 @@ To set up a Rule, within a PlayFab Title, go to *“Automation”* (1) in the le
 
 ![PlayFab: Adding a Rule](images/PlayFab-AddRule-1.png)
 
-A Rule is a configuration that listens on a [*PlayStream* event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/) emitted by Azure PlayFab. When such an event occurs, the Rule checks whether the configured Conditions are met and if they are, triggers the configured *Action*.
+A Rule is a configuration that listens on a [*PlayStream* event](https://docs.microsoft.com/en-us/gaming/playfab/features/automation/playstream-events/) emitted by Azure PlayFab. When such an event occurs, the Rule checks whether the configured *Conditions* are met and if they are, triggers the configured *Action*.
 
 In our case, we want no conditions, but want to “Execute Azure Function”. In fact, what it does, is calling its own internal binding we just set up and provides it the PlayStream event data and additional arguments you may specify here (in JSON format) as argument to that binding.
 
