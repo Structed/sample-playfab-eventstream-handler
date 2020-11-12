@@ -25,7 +25,7 @@ namespace PlayFabEventStreamHandler
             await CreateNews(log, context);
             await CreateItem(log, context);
         }
-        
+
         private static async Task UpdatePlayerData(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
         {
             var updateUserDataRequest = new PlayFab.ServerModels.UpdateUserDataRequest {
