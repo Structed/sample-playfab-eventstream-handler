@@ -37,12 +37,12 @@ While you can follow along with basically any Editor/IDE, I will be using [Visua
 If you do not yet have used Azure, you [sign up for free](https://azure.microsoft.com/en-us/free/gaming/) and get some additional goodies with [Visual Studio Dev Essentials](https://visualstudio.microsoft.com/dev-essentials/) program.
 
 ### Azure PlayFab access
-And, of course, since this is a Tutorial on how to use [Azure PlayFab](https://playfab.com/), you need an existing Title on PlayFab as well. You could use the same Microsoft Account you used for signing up to Azure. Remember: There is a [free tier to get you started](https://developer.playfab.com/en-US/sign-up)!
+And, of course, since this is a Tutorial on how to use [Azure PlayFab](https://playfab.com/), you need an existing Title on PlayFab as well. Use the same Microsoft Account you used for signing up to Azure. Remember: There is a [free tier to get you started](https://developer.playfab.com/en-US/sign-up)!
 
 # Getting Started
 As there are so many languages and platforms supported by Azure PlayFab and Azure Functions, I had to decide for one and chose the language and platform I am best in: Pure C# & .NET Core. But there are great guides for various Game Engines like Unity and Unreal, and PlayFab provides SDKs for a plethora of languages that are very similar to the C# SDK because they are all auto-generated from the same REST API.
 
-So while this is C#, most of what we do here is very similar in other languages/runtimes
+So while this is C#, most of what we do here is very similar in other languages/runtimes.
 
 ## Project Setup
 ### Create an Azure Functions Project
@@ -58,13 +58,13 @@ Choose a name for your Project and select the folder for it to be placed in:
 
 ![Visual Studio - Fill out project details](images/VisualStudio-NewProject-3.png)
 
-This will create a folder named according to your Solution name, in which it will create another folder for the project, with the Project’s name you chose.
+This will create a folder named according to your Solution name, in which it will create another folder for the project, using the name you chose.
 
-Now, in the next dialog, you may either choose an `HttpTrigger` or a `QueueTrigger` for your Function. Please choose `QueueTrigger`.
+In the next dialog, choose `QueueTrigger`.
 
-> Please be aware that Azure PlayFab terminates PlayStream-invoked Azure Functions after 1 second, thus `QueueTrigger` is the better choice here since it will immediately yield back to Azure PlayFab.
+> Please be aware that Azure PlayFab terminates PlayStream-invoked Azure Functions using an `HttpTrigger` after 1 second, thus `QueueTrigger` is the better choice here since it will immediately yield back to Azure PlayFab.
 
-For the Storage Account drop-down, you may use Storage Emulator (which comes with Visual Studio or you can use the new ["Azurite"](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite), which is the new generation of the Storage Emulator) or click “Browse…” to select a Storage Account. As we will need to test it with Azure PlayFab anyways, let’s go ahead and use an Azure Storage Account. Please click "Browse…" to create a new Storage Account:
+For the Storage Account drop-down, you may use Storage Emulator or click “Browse…” to select a Storage Account. As we will need to test it with Azure PlayFab anyways, let’s go ahead and use an Azure Storage Account. Please click "Browse…" to create a new Storage Account:
 
 ![Select Functions Trigger](images/VisualStudio-NewProject-4.png)
 
@@ -74,7 +74,7 @@ In the next dialog, click "Create a storage account"
 
 When creating the storage account, make sure to create a unique name. It actually has to be globally unique, because it will be part of the URI. You will see a warning if it is not unique.
 
-Also, you should create a new resource group for this project. A resource group is basically the topmost container in Azure and can contain all the different resources we are going to create. For example, if you want to remove all of the things we are creating in this article, you could just remove the resource group. [You can read more about the Resource Manager deployment model and resource groups in the documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview).
+Also, you should create a new resource group for this project. A resource group is the topmost resource container in Azure and can contain all the different resources we are going to create. For example, if you want to remove all of the things we will be creating in this article, just remove the resource group at the end. [Read more about the Resource Manager deployment model and resource groups in the documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview).
 
 Last, let's think about the Account type. While it is enough for the sake of this tutorial to choose "LRS - Locally Redundant Storage", it it is worth considering [other redundancy options](https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy) for different use-cases.
 
@@ -90,9 +90,7 @@ The Storage Account should now appear in the drop-down, beneath "Storage Emulato
 
 I would advise to leave "Connection string setting name" empty for now. Using this would create a new setting and would be a bit confusing for now.
 
-For "Queue name", make up a name for the storage queue (which we will actually create later). It does not have to have a unique name, but it may only use characters, numbers and dashes.
-
-Just call it `login-events` for now.
+For "Queue name", use `login-events` (we will actually create the queue later). It does not have to have a unique name, but it may only use characters, numbers and dashes.
 
 ![Set up storage settings](images/VisualStudio-NewProject-4-1.png)
 
@@ -139,7 +137,7 @@ We just need to put in `AzureWebJobsStorage` instead of the empty string to load
     public static void Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")]string myQueueItem, ILogger log)
 
 ### Add the Azure PlayFab package
-The Azure PlayFab SDK for C# is available via NuGet. You can either add the latest version via the dotnet CLI
+The Azure PlayFab SDK for C# is available on NuGet. You can either add the latest version using the dotnet CLI
 
     dotnet add package PlayFabAllSDK
 
@@ -224,7 +222,7 @@ To achieve this, let’s create a small CLI application to log a Player in.
 
 In Visual Studio, create a new .NET Core Application (preferably in the same Solution as the Function app) and then install the `PlayFabAllSDK`, just like above.
 
-Now, you can paste the following C# code to your `Program.cs` to have a working program that signs into your game and if the Player does not yet exist, it will create a new one.
+Now, you paste the following C# code to your `Program.cs` to have a working program that signs into your game and if the Player does not yet exist, it will create a new one.
 
 > Well, at least it is almost working. You need to substitute XXXX with your own Title ID. You can get the Title ID from your [Studio’s Overview Page](https://developer.playfab.com/en-US/my-games).
 
@@ -299,7 +297,7 @@ It's time to start the actual backend implementation!
 Before we even get started with writing backend code, you will need a [Helper classes file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs), provided by PlayFab. [Download the file](https://github.com/PlayFab/PlayFab-Samples/blob/master/Samples/CSharp/AzureFunctions/CS2AFHelperClasses.cs) and save it to your project (directly beneath the `*.csproj`
  or the Function class file). Here is why:
 
-Every time a Function is triggered, The `Context` in which it was executed is sent as a parameter. The Context includes the following when the Function is triggered via a PlayStream Event:
+Every time a Function is triggered, the `Context` in which it was executed is sent as a parameter. The Context includes the following when the Function is triggered via a PlayStream Event:
 
 * The Entity Profile
 * The PlayStream event which triggered the script.
@@ -411,7 +409,7 @@ Create a new Method `UpdatePlayerData` as below:
         }
     }
 
-an call it in your Function's `Run()` method:
+and call it in your Function's `Run()` method:
 
     await UpdatePlayerData(log, context);
     
@@ -479,7 +477,7 @@ Each PlayFab API request has a corresponding Request object, which is named acco
 
 The `UpdateUserDataRequest` *requires* a `PlayFabId` to know which Object to update. In our case, we want to update a Player, thus we need to pass a `PlayerId`, so it knows which Player to update. You can retrieve that from the Context that we deserialized earlier.
 
-Now to the core: Adding a `Dictionary<string, string>` as `Data`, containing Key/Value pairs for the Data we want to set on the Player- e.g. the amount of Mana.
+Now to the core: Adding a `Dictionary<string, string>` as `Data`, containing key/value pairs for the Data we want to set on the Player - e.g. the amount of Mana.
 
 #### Sending the Request
     PlayFabResult<PlayFab.ServerModels.UpdateUserDataResult> result = await PlayFabServerAPI.UpdateUserDataAsync(updateUserDataRequest);
@@ -507,7 +505,7 @@ Now that we have a working Azure Function, let’s deploy it to Azure!
 > If you do not use Visual Studio, but want to use another IDE/Toolset, there are examples for creating & publishing Azure Function Apps with [Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code?pivots=programming-language-csharp) or via [CLI](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli?tabs=bash%2Cbrowser&pivots=programming-language-csharp).
 
 ### Deploy with the "Publish" command
-To get started and for the sake of this demo, we will be using “right click deploy”, the deployment mechanism integrated in Visual Studio. While this is convenient for a demo, please consider [Azure DevOps](https://dev.azure.com/) or [GitHub Actions](https://github.com/features/actions) to build your **automated** Continuous Integration & Continuous Deployment (CI/CD) pipelines for a real project – because manual deployments are error prone, require knowledge by a team member etc. Thus, there is the saying: *“Friends don’t let Friends right-click publish!”*
+To get started and for the sake of this demo, we will be using “right click deploy”, the deployment mechanism integrated in Visual Studio. While this is convenient for a demo, please consider [Azure DevOps](https://dev.azure.com/) or [GitHub Actions](https://github.com/features/actions) to build your **automated** Continuous Integration & Continuous Deployment (CI/CD) pipelines for a real project – because manual deployments are error prone, require knowledge by a team member etc.
 
 In Visual Studio, right-click the project and click “Publish”:
 
