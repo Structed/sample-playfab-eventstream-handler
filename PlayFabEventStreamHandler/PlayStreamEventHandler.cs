@@ -10,23 +10,22 @@ using System.Threading.Tasks;
 
 namespace PlayFabEventStreamHandler
 {
-    public static class Function1
+    public static class PlayStreamEventHandler
     {
-        [FunctionName("Function1")]
+        [FunctionName("PlayStreamEventHandler")]
         public static async Task Run([QueueTrigger("login-events", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
         {
             var context = JsonConvert.DeserializeObject<PlayerPlayStreamFunctionExecutionContext<dynamic>>(myQueueItem);
             log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
 
             PlayFabSettings.staticSettings.TitleId = context.TitleAuthenticationContext.Id;
-            PlayFabSettings.staticSettings.DeveloperSecretKey =
-                Environment.GetEnvironmentVariable("DeveloperSecretKey");
+            PlayFabSettings.staticSettings.DeveloperSecretKey = Environment.GetEnvironmentVariable("DeveloperSecretKey");
 
             await UpdatePlayerData(log, context);
             await CreateNews(log, context);
             await CreateItem(log, context);
         }
-        
+
         private static async Task UpdatePlayerData(ILogger log, PlayerPlayStreamFunctionExecutionContext<dynamic> context)
         {
             var updateUserDataRequest = new PlayFab.ServerModels.UpdateUserDataRequest {
